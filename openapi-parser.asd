@@ -18,7 +18,7 @@
                (:file "schema-3-0-1")
                (:file "schema-3-1-0")
                (:file "yaml")
-               (:file "openapi-parser"))
+               (:file "parser"))
   :in-order-to ((test-op (test-op "openapi-parser-tests"))))
 
 (defsystem "openapi-parser-tests"
