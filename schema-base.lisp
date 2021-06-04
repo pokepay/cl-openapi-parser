@@ -195,3 +195,6 @@
    (eswitch (version-string :test #'string=)
      ("3.0.1" :openapi-parser/schema/3.0.1)
      ("3.1.0" :openapi-parser/schema/3.1.0))))
+
+(defun get-x-property (schema key)
+  (gethash key (schema-x-properties schema)))

@@ -66,6 +66,7 @@
 
 (defpackage :openapi-parser/schema
   (:use :cl :alexandria)
+  (:export :get-x-property)
   (:export :->type
            :->enum
            :->const
