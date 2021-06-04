@@ -7,6 +7,12 @@
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defun make-reader-name (class-name slot-name)
+    (declare (ignore class-name))
+    (symbolicate "->"
+                 (ppcre:regex-replace "^<(.*)>$"
+                                      (string slot-name)
+                                      "\\1"))
+    #+(or)
     (alexandria:symbolicate (ppcre:regex-replace "^<(.*)>$"
                                                  (string class-name)
                                                  "\\1")
@@ -54,25 +60,27 @@
                :end-anchor))))))
 
 (defmacro define-schema (name direct-superclasses &body slots)
-  `(defclass ,name (,@direct-superclasses)
-     ,(mapcar (lambda (slot)
-                (destructuring-bind (slot-name
-                                     &key documentation required (type nil type-p) field-name)
-                    slot
-                  `(,slot-name :initarg ,(make-keyword slot-name)
-                               :required ,required
-                               ,@(when required `(:initform (missing-initarg
-                                                             ',name
-                                                             ,(make-keyword slot-name))))
-                               :accessor ,(make-reader-name name slot-name)
-                               :documentation ,documentation
-                               ,@(when type-p `(:type ,type))
-                               :field-name ,field-name
-                               ,@(when (and (eq slot-name +patterned-field-slot-name+)
-                                            field-name)
-                                   `(:field-pattern ,(convert-patterned-field field-name))))))
-              slots)
-     (:metaclass schema-metaclass)))
+  (with-unique-names (default instance)
+    `(progn
+       (defclass ,name (,@direct-superclasses)
+         ,(mapcar (lambda (slot)
+                    (destructuring-bind (slot-name
+                                         &key documentation required (type nil type-p) field-name)
+                        slot
+                      `(,slot-name :initarg ,(make-keyword slot-name)
+                                   :required ,required
+                                   ,@(when required `(:initform (missing-initarg
+                                                                 ',name
+                                                                 ,(make-keyword slot-name))))
+                                   ;; :accessor ,(make-reader-name name slot-name)
+                                   :documentation ,documentation
+                                   ,@(when type-p `(:type ,type))
+                                   :field-name ,field-name
+                                   ,@(when (and (eq slot-name +patterned-field-slot-name+)
+                                                field-name)
+                                       `(:field-pattern ,(convert-patterned-field field-name))))))
+                  slots)
+         (:metaclass schema-metaclass)))))
 
 (defclass schema ()
   ((x-properties :initarg :x-properties
