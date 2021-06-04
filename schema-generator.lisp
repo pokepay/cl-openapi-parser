@@ -343,6 +343,16 @@
                        :if-exists :supersede)
     (generate-schema.lisp openapi-file out)))
 
+(defun json-schema-reader-names ()
+  (loop :for slot-name :in
+           (mapcar #'c2mop:slot-definition-name
+                   (openapi-parser/schema::schema-spec-slots
+                    (find-class openapi-parser/schema::+json-schema-class-name+)))
+        :collect (make-keyword
+                  (openapi-parser/schema::make-reader-name
+                   openapi-parser/schema::+json-schema-class-name+
+                   slot-name))))
+
 (defun generate-all-readers (readers reader-definition-file)
   (with-open-file (out reader-definition-file
                        :direction :output
@@ -354,15 +364,17 @@
       (generate-defpackage-form
        :openapi-parser/schema
        (remove-duplicates
-        (loop :for (class-name slot-name) :in readers
-              :for reader-defmethod-form := (openapi-parser/schema::generate-schema-slot-reader
-                                             class-name
-                                             slot-name
-                                             (find-package :openapi-parser/schema))
-              :do (terpri out)
-                  (let ((*package* (find-package :openapi-parser/schema)))
-                    (pprint reader-defmethod-form out))
-              :collect (second reader-defmethod-form)))))))
+        (append
+         (json-schema-reader-names)
+         (loop :for (class-name slot-name) :in readers
+               :for reader-defmethod-form := (openapi-parser/schema::generate-schema-slot-reader
+                                              class-name
+                                              slot-name
+                                              (find-package :openapi-parser/schema))
+               :do (terpri out)
+                   (let ((*package* (find-package :openapi-parser/schema)))
+                     (pprint reader-defmethod-form out))
+               :collect (second reader-defmethod-form))))))))
 
 (defun generate ()
   (let ((*readers* '()))
