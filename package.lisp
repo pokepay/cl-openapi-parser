@@ -64,7 +64,7 @@
            :<o-auth-flow>
            :<security-requirement>))
 
-(defpackage :openapi-parse/schema
+(defpackage :openapi-parser/schema
   (:use :cl :alexandria)
   (:export :->nullable
            :->read-only
