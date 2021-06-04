@@ -91,6 +91,7 @@
            :->all-of
            :->any-of
            :->one-of
+           :->not
            :->items
            :->title
            :->additional-properties

@@ -157,6 +157,7 @@
   (all-of :type (trivial-types:proper-list <schema>))
   (any-of :type (trivial-types:proper-list <schema>))
   (one-of :type (trivial-types:proper-list <schema>))
+  (not :type <schema>)
   (items :type <schema>)
   (title :type string)
   (additional-properties :type (or booeal <schema>))
