@@ -95,6 +95,7 @@
    :->one-of
    :->items
    :->title
+   :->additional-properties
    :->description
    :->format
    :->$ref

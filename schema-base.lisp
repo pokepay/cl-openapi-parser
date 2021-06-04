@@ -159,6 +159,7 @@
   (one-of :type (trivial-types:proper-list <schema>))
   (items :type <schema>)
   (title :type string)
+  (additional-properties :type (or booeal <schema>))
 
   ;; openapi
   (description :field-name "description" :type string)
