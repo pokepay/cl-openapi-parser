@@ -261,7 +261,7 @@
         (last-schema nil))
     (flet ((add-schema (schema)
              (when (equal "Schema Object" (schema-name schema))
-               (setf (schema-base-schema schema) 'openapi-parser/schema::<json-schema>))
+               (setf (schema-base-schema schema) openapi-parser/schema::+json-schema-class-name+))
              (setf last-schema schema)
              (pushnew (schema-name schema)
                       (schema-table-ordered-names schema-table)
@@ -355,18 +355,14 @@
        :openapi-parser/schema
        (remove-duplicates
         (loop :for (class-name slot-name) :in readers
-              :for reader-name := (openapi-parser/schema::make-reader-name
-                                   class-name slot-name)
+              :for reader-defmethod-form := (openapi-parser/schema::generate-schema-slot-reader
+                                             class-name
+                                             slot-name
+                                             (find-package :openapi-parser/schema))
               :do (terpri out)
-                  (pprint
-                   `(defmethod ,reader-name
-                        ((instance ,class-name)
-                         &optional default)
-                      (if (slot-boundp instance ',slot-name)
-                          (slot-value instance ',slot-name)
-                          default))
-                   out)
-              :collect (make-keyword reader-name)))))))
+                  (let ((*package* (find-package :openapi-parser/schema)))
+                    (pprint reader-defmethod-form out))
+              :collect (second reader-defmethod-form)))))))
 
 (defun generate ()
   (let ((*readers* '()))

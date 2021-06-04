@@ -175,13 +175,13 @@
       default))
 
 (defmethod ->field* ((instance openapi-parser/schema/3.0.1:<paths>) &optional default)
-  (if (slot-boundp instance 'openapi-parser/schema::field*)
-      (slot-value instance 'openapi-parser/schema::field*)
+  (if (slot-boundp instance 'field*)
+      (slot-value instance 'field*)
       default))
 
 (defmethod ->$ref ((instance openapi-parser/schema/3.0.1:<path-item>) &optional default)
-  (if (slot-boundp instance 'openapi-parser/schema::$ref)
-      (slot-value instance 'openapi-parser/schema::$ref)
+  (if (slot-boundp instance '$ref)
+      (slot-value instance '$ref)
       default))
 
 (defmethod ->summary ((instance openapi-parser/schema/3.0.1:<path-item>) &optional default)
@@ -443,8 +443,8 @@
       default))
 
 (defmethod ->field* ((instance openapi-parser/schema/3.0.1:<responses>) &optional default)
-  (if (slot-boundp instance 'openapi-parser/schema::field*)
-      (slot-value instance 'openapi-parser/schema::field*)
+  (if (slot-boundp instance 'field*)
+      (slot-value instance 'field*)
       default))
 
 (defmethod ->default ((instance openapi-parser/schema/3.0.1:<responses>) &optional default)
@@ -473,8 +473,8 @@
       default))
 
 (defmethod ->field* ((instance openapi-parser/schema/3.0.1:<callback>) &optional default)
-  (if (slot-boundp instance 'openapi-parser/schema::field*)
-      (slot-value instance 'openapi-parser/schema::field*)
+  (if (slot-boundp instance 'field*)
+      (slot-value instance 'field*)
       default))
 
 (defmethod ->summary ((instance openapi-parser/schema/3.0.1:<example>) &optional default)
@@ -543,8 +543,8 @@
       default))
 
 (defmethod ->$ref ((instance openapi-parser/schema/3.0.1:<reference>) &optional default)
-  (if (slot-boundp instance 'openapi-parser/schema::$ref)
-      (slot-value instance 'openapi-parser/schema::$ref)
+  (if (slot-boundp instance '$ref)
+      (slot-value instance '$ref)
       default))
 
 (defmethod ->nullable ((instance openapi-parser/schema/3.0.1:<schema>) &optional default)
@@ -711,8 +711,8 @@
 
 (defmethod ->field*
            ((instance openapi-parser/schema/3.0.1:<security-requirement>) &optional default)
-  (if (slot-boundp instance 'openapi-parser/schema::field*)
-      (slot-value instance 'openapi-parser/schema::field*)
+  (if (slot-boundp instance 'field*)
+      (slot-value instance 'field*)
       default))
 
 (defmethod ->openapi ((instance openapi-parser/schema/3.1.0:<open-api>) &optional default)
@@ -914,13 +914,13 @@
       default))
 
 (defmethod ->field* ((instance openapi-parser/schema/3.1.0:<paths>) &optional default)
-  (if (slot-boundp instance 'openapi-parser/schema::field*)
-      (slot-value instance 'openapi-parser/schema::field*)
+  (if (slot-boundp instance 'field*)
+      (slot-value instance 'field*)
       default))
 
 (defmethod ->$ref ((instance openapi-parser/schema/3.1.0:<path-item>) &optional default)
-  (if (slot-boundp instance 'openapi-parser/schema::$ref)
-      (slot-value instance 'openapi-parser/schema::$ref)
+  (if (slot-boundp instance '$ref)
+      (slot-value instance '$ref)
       default))
 
 (defmethod ->summary ((instance openapi-parser/schema/3.1.0:<path-item>) &optional default)
@@ -1182,8 +1182,8 @@
       default))
 
 (defmethod ->field* ((instance openapi-parser/schema/3.1.0:<responses>) &optional default)
-  (if (slot-boundp instance 'openapi-parser/schema::field*)
-      (slot-value instance 'openapi-parser/schema::field*)
+  (if (slot-boundp instance 'field*)
+      (slot-value instance 'field*)
       default))
 
 (defmethod ->default ((instance openapi-parser/schema/3.1.0:<responses>) &optional default)
@@ -1212,8 +1212,8 @@
       default))
 
 (defmethod ->field* ((instance openapi-parser/schema/3.1.0:<callback>) &optional default)
-  (if (slot-boundp instance 'openapi-parser/schema::field*)
-      (slot-value instance 'openapi-parser/schema::field*)
+  (if (slot-boundp instance 'field*)
+      (slot-value instance 'field*)
       default))
 
 (defmethod ->summary ((instance openapi-parser/schema/3.1.0:<example>) &optional default)
@@ -1282,8 +1282,8 @@
       default))
 
 (defmethod ->$ref ((instance openapi-parser/schema/3.1.0:<reference>) &optional default)
-  (if (slot-boundp instance 'openapi-parser/schema::$ref)
-      (slot-value instance 'openapi-parser/schema::$ref)
+  (if (slot-boundp instance '$ref)
+      (slot-value instance '$ref)
       default))
 
 (defmethod ->summary ((instance openapi-parser/schema/3.1.0:<reference>) &optional default)
@@ -1440,6 +1440,6 @@
 
 (defmethod ->field*
            ((instance openapi-parser/schema/3.1.0:<security-requirement>) &optional default)
-  (if (slot-boundp instance 'openapi-parser/schema::field*)
-      (slot-value instance 'openapi-parser/schema::field*)
+  (if (slot-boundp instance 'field*)
+      (slot-value instance 'field*)
       default))

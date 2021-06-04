@@ -2,6 +2,7 @@
 
 (defconstant +default-version-package+ :openapi-parser/schema/3.1.0)
 (defconstant +patterned-field-slot-name+ 'field*)
+(defconstant +json-schema-class-name+ '<json-schema>)
 
 (defvar *openapi-version-package*)
 
@@ -59,6 +60,16 @@
                ,@(unless (length= suffix 0) (list suffix))
                :end-anchor))))))
 
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defun generate-schema-slot-reader (class-name slot-name &optional (*package* *package*))
+    (let ((reader-name (make-reader-name class-name slot-name)))
+      `(defmethod ,reader-name
+           ((instance ,class-name)
+            &optional default)
+         (if (slot-boundp instance ',slot-name)
+             (slot-value instance ',slot-name)
+             default)))))
+
 (defmacro define-schema (name direct-superclasses &body slots)
   `(progn
      (defclass ,name (,@direct-superclasses)
@@ -71,7 +82,6 @@
                                  ,@(when required `(:initform (missing-initarg
                                                                ',name
                                                                ,(make-keyword slot-name))))
-                                 ;; :accessor ,(make-reader-name name slot-name)
                                  :documentation ,documentation
                                  ,@(when type-p `(:type ,type))
                                  :field-name ,field-name
@@ -79,7 +89,11 @@
                                               field-name)
                                      `(:field-pattern ,(convert-patterned-field field-name))))))
                 slots)
-       (:metaclass schema-metaclass))))
+       (:metaclass schema-metaclass))
+     ,@(when (eq name +json-schema-class-name+)
+         (loop :for (slot-name) :in slots
+               :collect (generate-schema-slot-reader +json-schema-class-name+
+                                                     slot-name)))))
 
 (defclass schema ()
   ((x-properties :initarg :x-properties
@@ -118,7 +132,6 @@
 ;; https://datatracker.ietf.org/doc/html/draft-bhutton-json-schema-validation-00#section-6
 ;; TODO: キーが足りない&型宣言がない
 (define-schema <json-schema> (fixed-fields-schema)
-
   (type :type string)
   (enum :type (trivial-types:proper-list (or boolean string)))
   (const)
