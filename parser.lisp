@@ -5,11 +5,19 @@
 (defvar *reading-toplevel-yaml-object*)
 (defvar *reading-yaml-filename*)
 
+(defun openapi-parse-error (datum &rest arguments)
+  (let* ((path (get-path))
+         (line-number (compute-line-number-from-path *reading-yaml-filename* path)))
+    (apply #'error datum
+           :path (get-path)
+           :line-number line-number
+           arguments)))
+
 (defun validate-type (value type)
   (unless (typep value type)
-    (error 'invalid-value
-           :value value
-           :expected-type type)))
+    (openapi-parse-error 'invalid-value
+                         :value value
+                         :expected-type type)))
 
 (defun finalize-class (class)
   (unless (c2mop:class-finalized-p class)
@@ -44,9 +52,9 @@
           :for key := (slot-name-to-key-name slot-name)
           :do (if (not (hash-exists-p key yaml))
                   (when (openapi-parser/schema::field-slot-required slot)
-                    (error 'missing-field
-                           :name key
-                           :expected-type class))
+                    (openapi-parse-error 'missing-field
+                                         :name key
+                                         :expected-type class))
                   (let ((value (gethash key yaml)))
                     (push key seen-keys)
                     (push (make-keyword (string slot-name)) initargs)
@@ -106,7 +114,7 @@
     (let ((ref-schema
             (let* ((path (parse-ref-path (gethash "$ref" value)))
                    (ref-value (or (reference-path *reading-toplevel-yaml-object* path)
-                                  (error 'no-such-field-error :ref (gethash "$ref" value)))))
+                                  (openapi-parse-error 'no-such-field-error :ref (gethash "$ref" value)))))
               (with-path (:replace path)
                 (parse schema-class ref-value)))))
       (merge-schema result ref-schema schema-class)))
@@ -157,8 +165,8 @@
              (path (parse-ref-path (openapi-parser/schema::$ref reference)))
              (ref-value (or (reference-path *reading-toplevel-yaml-object*
                                             path)
-                            (error 'no-such-field-error
-                                   :ref (openapi-parser/schema::$ref reference)))))
+                            (openapi-parse-error 'no-such-field-error
+                                                 :ref (openapi-parser/schema::$ref reference)))))
         (with-path (:replace path)
           (parse type-spec ref-value))))
     (:no-error (result)
@@ -201,7 +209,7 @@
                    (push c parser-errors))
                  (:no-error (result)
                    (return result)))
-           :finally (error 'invalid-all-values
+           :finally (openapi-parse-error 'invalid-all-values
                            :key (lastcar (get-path))
                            :value value
                            :expected-type type-spec
@@ -248,5 +256,4 @@
          (openapi-parser/schema::*openapi-version-package*
            (openapi-parser/schema::version-package
             (version yaml))))
-    (handler-bind ((openapi-parser-condition-context #'handle-openapi-parser-error))
-      (parse (find-class (openapi-parser/schema::get-openapi-class)) yaml))))
+    (parse (find-class (openapi-parser/schema::get-openapi-class)) yaml)))
