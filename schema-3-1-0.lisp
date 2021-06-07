@@ -128,7 +128,8 @@
   (allow-reserved :field-name "allowReserved" :type boolean)
   (schema :field-name "schema" :type <schema>)
   (example :field-name "example" :type t)
-  (examples :field-name "examples" :type nil)
+  (examples :field-name "examples" :type
+   (openapi-parser/schema::<map> string (or <example> <reference>)))
   (content :field-name "content" :type (openapi-parser/schema::<map> string <media-type>)))
 
 (openapi-parser/schema::define-schema <request-body>
@@ -142,7 +143,8 @@
     (openapi-parser/schema::fixed-fields-schema openapi-parser/schema/3/interface:<media-type>)
   (schema :field-name "schema" :type <schema>)
   (example :field-name "example" :type t)
-  (examples :field-name "examples" :type nil)
+  (examples :field-name "examples" :type
+   (openapi-parser/schema::<map> string (or <example> <reference>)))
   (encoding :field-name "encoding" :type (openapi-parser/schema::<map> string <encoding>)))
 
 (openapi-parser/schema::define-schema <encoding>
@@ -184,8 +186,8 @@
     (openapi-parser/schema::fixed-fields-schema openapi-parser/schema/3/interface:<link>)
   (operation-ref :field-name "operationRef" :type string)
   (operation-id :field-name "operationId" :type string)
-  (parameters :field-name "parameters" :type nil)
-  (request-body :field-name "requestBody" :type nil)
+  (parameters :field-name "parameters" :type (openapi-parser/schema::<map> string (or t string)))
+  (request-body :field-name "requestBody" :type (or t string))
   (description :field-name "description" :type string)
   (server :field-name "server" :type <server>))
 

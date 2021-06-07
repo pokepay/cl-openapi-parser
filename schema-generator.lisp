@@ -387,6 +387,9 @@
 (esrap:defrule whitespace (* #\space)
   (:constant nil))
 
+(esrap:defrule any "Any"
+  (:constant t))
+
 (esrap:defrule primitive-type (and #\` (+ (alphanumericp character)) #\`)
   (:lambda (result)
     (destructuring-bind (start characters end) result
@@ -403,19 +406,27 @@
       (char= character #\space)))
 
 (esrap:defrule link (and "["
-                           (+ (space-or-alphanumeric-p character))
-                           "](#"
-                           (+ (alpha-char-p character))
-                           ")")
+                         (or (+ (space-or-alphanumeric-p character))
+                             (and #\{ (+ (space-or-alphanumeric-p character)) #\}))
+                         "](#"
+                         (+ (alpha-char-p character))
+                         ")")
   (:lambda (result)
-    (list (coerce (second result) 'string)
-          (coerce (fourth result) 'string))))
+    (let ((alt (second result))
+          (link (fourth result)))
+      (setf alt (if (every #'characterp (second result))
+                    (coerce alt 'string)
+                    (format nil "{~A}" (coerce (second alt) 'string))))
+      (list alt
+            (coerce link 'string)))))
 
 (esrap:defrule object link
   (:lambda (result)
-    (let ((camel-string (second result)))
-      (change-to-schema-class-name
-       (ppcre:regex-replace "Object$" camel-string "")))))
+    (destructuring-bind (alt link) result
+      (if (equal alt "{expression}")
+          'string
+          (change-to-schema-class-name
+           (ppcre:regex-replace "Object$" link ""))))))
 
 (esrap:defrule map (and "Map["
                         field-type
@@ -430,8 +441,8 @@
   (:lambda (result)
     `(trivial-types:proper-list ,(second result))))
 
-(esrap:defrule single-type (or map object array primitive-type)
-  (:identity t))
+(esrap:defrule single-type (and whitespace (or map object array primitive-type any) whitespace)
+  (:function second))
 
 (esrap:defrule complex-type (and single-type whitespace "|" whitespace single-type)
   (:lambda (result)
@@ -442,7 +453,9 @@
   (:identity t))
 
 (defun parse-field-type (string)
-  (cond ((string= string "Any")
-         t)
-        (t
-         (esrap:parse 'field-type string :junk-allowed t))))
+  (let ((r
+          (cond ((string= string "Any")
+                 t)
+                (t
+                 (esrap:parse 'field-type string :junk-allowed t)))))
+    r))
