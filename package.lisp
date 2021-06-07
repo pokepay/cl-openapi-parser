@@ -220,13 +220,9 @@
   (:use :cl :alexandria)
   (:export :get-x-property))
 
-(defpackage :openapi-parser
+(uiop:define-package :openapi-parser
   (:use :cl :alexandria)
-  ;; (:local-nicknames
-  ;;  (:3.0.1
-  ;;   :openapi-parser/schema/3.0.1)
-  ;;  (:3.1.0
-  ;;   :openapi-parser/schema/3.1.0))
+  (:use-reexport :openapi-parser/schema/3/interface)
   (:export :parse-file))
 
 (cl-package-locks:lock-package :openapi-parser)
