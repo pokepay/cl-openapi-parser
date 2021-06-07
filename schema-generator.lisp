@@ -56,15 +56,18 @@
                   (split-vbars "foo|bar|b\\|az"))))
 |#
 
-(defun general-symbol-p (symbol-name)
+(defparameter *schema-base-symbols*
+  '(:define-schema
+    :$ref))
+
+(defun schema-base-symbol-p (symbol-name)
   (member symbol-name
-          '("DEFINE-PACKAGE"
-            "$REF")
+          *schema-base-symbols*
           :test #'string=))
 
 (defun string-to-symbol (string)
   (let ((symbol-name (string-upcase string)))
-    (if (general-symbol-p symbol-name)
+    (if (schema-base-symbol-p symbol-name)
         (multiple-value-bind (symbol foundp)
             (find-symbol symbol-name :openapi-parser/schema)
           (assert foundp)
