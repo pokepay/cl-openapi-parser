@@ -4,6 +4,8 @@
   (format nil "~{~A~^.~}" path))
 
 (defun print-error-header (condition stream)
+  (when-let (file (openapi-parser-condition-context-file condition))
+    (format stream "File: ~A~%" file))
   (format stream "Path: ~A~%" (path-to-string (openapi-parser-condition-context-path condition)))
   (when-let (line (openapi-parser-condition-context-line-number condition))
     (format stream "Line: ~A~%" line))
@@ -11,7 +13,11 @@
     (format stream "Expected type: ~A~%" (openapi-parser-condition-context-expected-type condition))))
 
 (define-condition openapi-parser-condition-context ()
-  ((path
+  ((file
+    :initarg :file
+    :initform nil
+    :reader openapi-parser-condition-context-file)
+   (path
     :initarg :path
     :initform (get-path)
     :reader openapi-parser-condition-context-path)

@@ -9,6 +9,7 @@
   (let* ((path (get-path))
          (line-number (compute-line-number-from-path *reading-yaml-filename* path)))
     (apply #'error datum
+           :file *reading-yaml-filename*
            :path (get-path)
            :line-number line-number
            arguments)))
