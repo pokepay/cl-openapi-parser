@@ -6,12 +6,10 @@
 (defvar *reading-yaml-filename*)
 
 (defun openapi-parse-error (datum &rest arguments)
-  (let* ((path (get-path))
-         (line-number (compute-line-number-from-path *reading-yaml-filename* path)))
+  (let* ((path (get-path)))
     (apply #'error datum
            :file *reading-yaml-filename*
-           :path (get-path)
-           :line-number line-number
+           :path path
            arguments)))
 
 (defun validate-type (value type)
@@ -135,6 +133,8 @@
     (dolist (key rest-keys)
       (with-path (:append key)
         (warn 'out-of-spec-key
+              :path (get-path)
+              :file *reading-yaml-filename*
               :key key
               :expected-type schema-class)))
     (assert (not (null schema)))

@@ -7,7 +7,8 @@
   (when-let (file (openapi-parser-condition-context-file condition))
     (format stream "File: ~A~%" file))
   (format stream "Path: ~A~%" (path-to-string (openapi-parser-condition-context-path condition)))
-  (when-let (line (openapi-parser-condition-context-line-number condition))
+  (when-let (line (compute-line-number-from-path (openapi-parser-condition-context-file condition)
+                                                 (openapi-parser-condition-context-path condition)))
     (format stream "Line: ~A~%" line))
   (when (slot-boundp condition 'expected-type)
     (format stream "Expected type: ~A~%" (openapi-parser-condition-context-expected-type condition))))
@@ -21,10 +22,6 @@
     :initarg :path
     :initform (get-path)
     :reader openapi-parser-condition-context-path)
-   (line-number
-    :initarg :line-number
-    :initform nil
-    :reader openapi-parser-condition-context-line-number)
    (expected-type
     :initarg :expected-type
     :reader openapi-parser-condition-context-expected-type)))
