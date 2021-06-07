@@ -13,6 +13,7 @@
                (:file "utils")
                (:file "path")
                (:file "error")
+               (:file "schema-interface")
                (:file "schema-base")
                (:file "schema-generator")
                (:file "schema-3-0-1")

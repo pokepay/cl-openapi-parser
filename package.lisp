@@ -1,3 +1,36 @@
+(defpackage :openapi-parser/schema/3/interface
+  (:use :cl)
+  (:export :<open-api>
+           :<info>
+           :<contact>
+           :<license>
+           :<server>
+           :<server-variable>
+           :<components>
+           :<paths>
+           :<path-item>
+           :<operation>
+           :<external-documentation>
+           :<parameter>
+           :<request-body>
+           :<media-type>
+           :<encoding>
+           :<responses>
+           :<response>
+           :<callback>
+           :<example>
+           :<link>
+           :<header>
+           :<tag>
+           :<reference>
+           :<schema>
+           :<discriminator>
+           :<xml>
+           :<security-scheme>
+           :<oauth-flow>
+           :<o-auth-flow>
+           :<security-requirement>))
+
 (defpackage :openapi-parser/schema/3.0.1
   (:use :cl :alexandria)
   (:export :<open-api>

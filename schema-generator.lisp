@@ -195,7 +195,8 @@
     (let ((class-name (schema-name-to-class-name (schema-name schema))))
       (push class-name *export-names*)
       `(openapi-parser/schema::define-schema ,class-name
-           ,(mapcar #'schema-to-base-class-name schemas)
+           (,@(mapcar #'schema-to-base-class-name schemas)
+            ,(find-symbol (string class-name) :openapi-parser/schema/3/interface))
          ,@(mapcan (lambda (schema)
                      (mapcar (lambda (field)
                                (let ((slot-form (field-to-slot-form schema field)))
