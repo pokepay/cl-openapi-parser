@@ -180,7 +180,7 @@
      value)
     ((list 'openapi-parser/schema::<map> k v)
      (parse-map k v value))
-    ('openapi-parser/schema::<schema>
+    ('openapi-parser/schema::<forward-referenced-schema>
      (parse (openapi-parser/schema::get-schema-class)
             value))
     ((list 'or

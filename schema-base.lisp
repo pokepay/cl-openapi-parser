@@ -126,7 +126,7 @@
   (declare (ignore k v))
   t)
 
-(deftype <schema> ()
+(deftype <forward-referenced-schema> ()
   t)
 
 ;; https://datatracker.ietf.org/doc/html/draft-bhutton-json-schema-validation-00#section-6
@@ -153,14 +153,14 @@
   (required)
   (dependent-required)
   (default)
-  (properties :type (<map> string <schema>))
-  (all-of :type (trivial-types:proper-list <schema>))
-  (any-of :type (trivial-types:proper-list <schema>))
-  (one-of :type (trivial-types:proper-list <schema>))
-  (not :type <schema>)
-  (items :type <schema>)
+  (properties :type (<map> string <forward-referenced-schema>))
+  (all-of :type (trivial-types:proper-list <forward-referenced-schema>))
+  (any-of :type (trivial-types:proper-list <forward-referenced-schema>))
+  (one-of :type (trivial-types:proper-list <forward-referenced-schema>))
+  (not :type <forward-referenced-schema>)
+  (items :type <forward-referenced-schema>)
   (title :type string)
-  (additional-properties :type (or booeal <schema>))
+  (additional-properties :type (or booeal <forward-referenced-schema>))
 
   ;; openapi
   (description :field-name "description" :type string)
