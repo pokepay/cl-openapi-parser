@@ -1,5 +1,6 @@
 (defpackage :openapi-parser/schema/3/interface
   (:use :cl)
+  (:export :<json-schema>)
   (:export :<open-api>
            :<info>
            :<contact>

@@ -6,20 +6,6 @@
 
 (defvar *openapi-version-package*)
 
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (defun make-reader-name (class-name slot-name)
-    (declare (ignore class-name))
-    (symbolicate "->"
-                 (ppcre:regex-replace "^<(.*)>$"
-                                      (string slot-name)
-                                      "\\1"))
-    #+(or)
-    (alexandria:symbolicate (ppcre:regex-replace "^<(.*)>$"
-                                                 (string class-name)
-                                                 "\\1")
-                            '-
-                            slot-name)))
-
 (defun missing-initarg (class-name initarg)
   (warn "Required initarg ~S missing in ~S." initarg class-name))
 
@@ -61,6 +47,19 @@
                :end-anchor))))))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
+  (defun make-reader-name (class-name slot-name)
+    (declare (ignore class-name))
+    (let ((*package* (find-package :openapi-parser/schema/3/interface)))
+      (symbolicate "->"
+                   (ppcre:regex-replace "^<(.*)>$"
+                                        (string slot-name)
+                                        "\\1")))
+    #+(or)
+    (alexandria:symbolicate (ppcre:regex-replace "^<(.*)>$"
+                                                 (string class-name)
+                                                 "\\1")
+                            '-
+                            slot-name))
   (defun generate-schema-slot-reader (class-name slot-name &optional (*package* *package*))
     (let ((reader-name (make-reader-name class-name slot-name)))
       `(defmethod ,reader-name
@@ -131,7 +130,7 @@
 
 ;; https://datatracker.ietf.org/doc/html/draft-bhutton-json-schema-validation-00#section-6
 ;; TODO: キーが足りない&型宣言がない
-(define-schema <json-schema> (fixed-fields-schema)
+(define-schema <json-schema> (fixed-fields-schema openapi-parser/schema/3/interface:<json-schema>)
   (type :type string)
   (enum :type (trivial-types:proper-list (or boolean string)))
   (const)

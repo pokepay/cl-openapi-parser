@@ -1,5 +1,7 @@
 (in-package :openapi-parser/schema/3/interface)
 
+(defclass <json-schema> () ())
+
 (defclass <open-api> () ())
 (defclass <info> () ())
 (defclass <contact> () ())
