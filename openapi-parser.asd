@@ -18,7 +18,6 @@
                (:file "schema-generator")
                (:file "schema-3-0-1")
                (:file "schema-3-1-0")
-               (:file "schema-readers")
                (:file "yaml")
                (:file "parser"))
   :in-order-to ((test-op (test-op "openapi-parser-tests"))))

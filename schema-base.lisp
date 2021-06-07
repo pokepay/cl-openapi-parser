@@ -60,14 +60,16 @@
                                                  "\\1")
                             '-
                             slot-name))
-  (defun generate-schema-slot-reader (class-name slot-name &optional (*package* *package*))
-    (let ((reader-name (make-reader-name class-name slot-name)))
+  (defun generate-schema-slot-reader (class-name slot-name)
+    (let ((reader-name (make-reader-name class-name slot-name))
+          (instance (make-symbol "INSTANCE"))
+          (default (make-symbol "DEFAULT")))
       `(defmethod ,reader-name
-           ((instance ,class-name)
-            &optional default)
-         (if (slot-boundp instance ',slot-name)
-             (slot-value instance ',slot-name)
-             default)))))
+           ((,instance ,class-name)
+            &optional ,default)
+         (if (slot-boundp ,instance ',slot-name)
+             (slot-value ,instance ',slot-name)
+             ,default)))))
 
 (defmacro define-schema (name direct-superclasses &body slots)
   `(progn
@@ -89,20 +91,24 @@
                                      `(:field-pattern ,(convert-patterned-field field-name))))))
                 slots)
        (:metaclass schema-metaclass))
-     ,@(when (eq name +json-schema-class-name+)
-         (loop :for (slot-name) :in slots
-               :collect (generate-schema-slot-reader +json-schema-class-name+
-                                                     slot-name)))))
+     ,@(loop :for (slot-name) :in slots
+             :collect (generate-schema-slot-reader name
+                                                   slot-name))))
 
 (defclass schema ()
   ((x-properties :initarg :x-properties
                  :initform nil
                  :reader schema-x-properties)))
 
+(defun class-precedence-list (class)
+  (unless (c2mop:class-finalized-p class)
+    (c2mop:finalize-inheritance class))
+  (c2mop:class-precedence-list class))
+
 (defun schema-spec-slots (class)
   ;; x-propertiesを除外してdefine-schemaで定義したスロットだけを返す
   (loop :with root-class := (find-class 'schema)
-        :for c :in (c2mop:class-precedence-list class)
+        :for c :in (class-precedence-list class)
         :until (eq c root-class)
         :append (progn
                   (c2mop:class-direct-slots c))))
