@@ -17,5 +17,10 @@ OpenAPI 3.0.1 and 3.1.0 parser/validator
 ; Missing field key 'description'
 ```
 
+### Warning
+
+This software is still ALPHA quality. The APIs will be likely to change.
+
 ## License
+
 MIT
