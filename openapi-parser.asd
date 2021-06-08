@@ -1,4 +1,6 @@
 (defsystem "openapi-parser"
+  :license "MIT"
+  :author "pokepay developer team"
   :depends-on ("cl-yaml"
                "alexandria"
                "cl-change-case"
