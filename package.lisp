@@ -223,6 +223,7 @@
 (uiop:define-package :openapi-parser
   (:use :cl :alexandria)
   (:use-reexport :openapi-parser/schema/3/interface)
+  (:use-reexport :openapi-parser/schema)
   (:export :parse-file))
 
 (cl-package-locks:lock-package :openapi-parser)
