@@ -37,10 +37,13 @@
 (defun specification-extension-key-p (key)
   (starts-with-subseq "x-" key))
 
+(defvar *slot-name-to-key-name-cache* (make-hash-table :test 'equal))
 (defun slot-name-to-key-name (slot-name)
-  (if (eq 'openapi-parser/schema::$ref slot-name)
-      "$ref"
-      (change-case:camel-case (string slot-name))))
+  (or (gethash slot-name *slot-name-to-key-name-cache*)
+      (setf (gethash slot-name *slot-name-to-key-name-cache*)
+            (if (eq 'openapi-parser/schema::$ref slot-name)
+                "$ref"
+                (change-case:camel-case (string slot-name))))))
 
 (defun parse-fixed-fields-schema (class yaml)
   (validate-type yaml 'hash-table)
@@ -113,7 +116,8 @@
     (let ((ref-schema
             (let* ((path (parse-ref-path (gethash "$ref" value)))
                    (ref-value (or (reference-path *reading-toplevel-yaml-object* path)
-                                  (openapi-parse-error 'no-such-field-error :ref (gethash "$ref" value)))))
+                                  (openapi-parse-error 'no-such-field-error
+                                                       :ref (gethash "$ref" value)))))
               (with-path (:replace path)
                 (parse schema-class ref-value)))))
       (merge-schema result ref-schema schema-class)))
@@ -233,9 +237,14 @@
     ((type standard-class)
      (parse-schema type-spec value))))
 
+(defvar *cache*)
+
 (defun parse (type-spec value &key key)
   (with-path (:append key)
-    (parse-schema-aux type-spec value)))
+    (let ((path (get-path)))
+      (or (gethash path *cache*)
+          (setf (gethash path *cache*)
+                (parse-schema-aux type-spec value))))))
 
 (defun print-file-location (stream &optional (path (get-path)))
   (let ((line-number (compute-line-number-from-path *reading-yaml-filename* path)))
@@ -254,6 +263,7 @@
   (let* ((yaml (cl-yaml:parse pathname))
          (*reading-toplevel-yaml-object* yaml)
          (*reading-yaml-filename* pathname)
+         (*cache* (make-hash-table :test 'equal))
          (openapi-parser/schema::*openapi-version-package*
            (openapi-parser/schema::version-package
             (version yaml))))
