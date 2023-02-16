@@ -165,7 +165,7 @@
   (not :type <forward-referenced-schema>)
   (items :type <forward-referenced-schema>)
   (title :type string)
-  (additional-properties :type (or booeal <forward-referenced-schema>))
+  (additional-properties :type (or boolean <forward-referenced-schema>))
 
   ;; openapi
   (description :field-name "description" :type string)
