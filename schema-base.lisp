@@ -138,7 +138,7 @@
 ;; TODO: キーが足りない&型宣言がない
 (define-schema <json-schema> (fixed-fields-schema openapi-parser/schema/3/interface:<json-schema>)
   (type :type string)
-  (enum :type (trivial-types:proper-list (or boolean string)))
+  (enum :type (trivial-types:proper-list t))
   (const)
   (multiple-of)
   (maximum)
